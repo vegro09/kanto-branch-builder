@@ -29,59 +29,25 @@ const STORAGE_KEY = "kanto_tree_data";
 
 /* ----------------------------- Design tokens ----------------------------- */
 
-export type Theme = "day" | "night";
-
-interface Palette {
-  /** master canvas */
-  cream: string;
-  /** cards, panels, and text sitting on ink fills */
-  white: string;
-  /** ink: text, blueprint lines, solid fills */
-  black: string;
-  /** structural hairlines */
-  gray: string;
-  dark: string;
-  muted: string;
-  done: string;
-  progress: string;
-  danger: string;
-}
-
-const PALETTES: Record<Theme, Palette> = {
-  day: {
-    cream: "#F5F5DC",
-    white: "#FFFFFF",
-    black: "#000000",
-    gray: "#E5E5D8",
-    dark: "#333333",
-    muted: "#777777",
-    done: "#10B981",
-    progress: "#EAB308",
-    danger: "#EF4444",
-  },
-  night: {
-    cream: "#0F0F0F",
-    white: "#161616",
-    black: "#F5F5DC",
-    gray: "#333333",
-    dark: "#777777",
-    muted: "#8A8A80",
-    done: "#10B981",
-    progress: "#EAB308",
-    danger: "#EF4444",
-  },
-};
-
-const PaletteContext = React.createContext<Palette>(PALETTES.day);
-const usePalette = (): Palette => React.useContext(PaletteContext);
+const C = {
+  cream: "#F5F5DC",
+  white: "#FFFFFF",
+  black: "#000000",
+  gray: "#E5E5D8",
+  dark: "#333333",
+  muted: "#777777",
+  done: "#10B981",
+  progress: "#EAB308",
+  danger: "#EF4444",
+} as const;
 
 const RADIUS = 8;
 
-const statusColor = (C: Palette): Record<TaskStatus, string> => ({
+const STATUS_COLOR: Record<TaskStatus, string> = {
   todo: C.muted,
   in_progress: C.progress,
   done: C.done,
-});
+};
 
 /* ------------------------------ Translations ----------------------------- */
 
@@ -335,9 +301,7 @@ const BarButton: React.FC<{
   solid?: boolean;
   danger?: boolean;
   title?: string;
-}> = ({ onClick, children, solid, danger, title }) => {
-  const C = usePalette();
-  return (
+}> = ({ onClick, children, solid, danger, title }) => (
   <button
     type="button"
     onClick={onClick}
@@ -351,8 +315,7 @@ const BarButton: React.FC<{
   >
     {children}
   </button>
-  );
-};
+);
 
 /* ------------------------------- Tree node ------------------------------- */
 
@@ -375,8 +338,6 @@ interface NodeProps {
 }
 
 const TreeNode: React.FC<NodeProps> = (p) => {
-  const C = usePalette();
-  const SC = statusColor(C);
   const {
     task,
     tasks,
@@ -453,7 +414,7 @@ const TreeNode: React.FC<NodeProps> = (p) => {
           }}
           className="shadow-none"
         >
-          <Dot color={SC[task.status]} />
+          <Dot color={STATUS_COLOR[task.status]} />
         </button>
 
         <input
@@ -561,9 +522,6 @@ const TreeNode: React.FC<NodeProps> = (p) => {
 /* ------------------------------ Main component ---------------------------- */
 
 const KantoTree: React.FC = () => {
-  const [theme, setTheme] = useState<Theme>("day");
-  const C = PALETTES[theme];
-  const SC = statusColor(C);
   const [tasks, setTasks] = useState<KantoTask[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -933,7 +891,7 @@ const KantoTree: React.FC = () => {
                           color: active ? C.white : C.black,
                         }}
                       >
-                        <Dot color={SC[s]} />
+                        <Dot color={STATUS_COLOR[s]} />
                         {t[s]}
                       </button>
                     );
