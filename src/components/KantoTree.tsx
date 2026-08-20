@@ -335,7 +335,9 @@ const BarButton: React.FC<{
   solid?: boolean;
   danger?: boolean;
   title?: string;
-}> = ({ onClick, children, solid, danger, title }) => (
+}> = ({ onClick, children, solid, danger, title }) => {
+  const C = usePalette();
+  return (
   <button
     type="button"
     onClick={onClick}
@@ -349,7 +351,8 @@ const BarButton: React.FC<{
   >
     {children}
   </button>
-);
+  );
+};
 
 /* ------------------------------- Tree node ------------------------------- */
 
@@ -372,6 +375,8 @@ interface NodeProps {
 }
 
 const TreeNode: React.FC<NodeProps> = (p) => {
+  const C = usePalette();
+  const SC = statusColor(C);
   const {
     task,
     tasks,
@@ -448,7 +453,7 @@ const TreeNode: React.FC<NodeProps> = (p) => {
           }}
           className="shadow-none"
         >
-          <Dot color={STATUS_COLOR[task.status]} />
+          <Dot color={SC[task.status]} />
         </button>
 
         <input
@@ -556,6 +561,9 @@ const TreeNode: React.FC<NodeProps> = (p) => {
 /* ------------------------------ Main component ---------------------------- */
 
 const KantoTree: React.FC = () => {
+  const [theme, setTheme] = useState<Theme>("day");
+  const C = PALETTES[theme];
+  const SC = statusColor(C);
   const [tasks, setTasks] = useState<KantoTask[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -925,7 +933,7 @@ const KantoTree: React.FC = () => {
                           color: active ? C.white : C.black,
                         }}
                       >
-                        <Dot color={STATUS_COLOR[s]} />
+                        <Dot color={SC[s]} />
                         {t[s]}
                       </button>
                     );
