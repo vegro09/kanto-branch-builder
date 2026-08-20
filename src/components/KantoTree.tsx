@@ -29,25 +29,59 @@ const STORAGE_KEY = "kanto_tree_data";
 
 /* ----------------------------- Design tokens ----------------------------- */
 
-const C = {
-  cream: "#F5F5DC",
-  white: "#FFFFFF",
-  black: "#000000",
-  gray: "#E5E5D8",
-  dark: "#333333",
-  muted: "#777777",
-  done: "#10B981",
-  progress: "#EAB308",
-  danger: "#EF4444",
-} as const;
+export type Theme = "day" | "night";
+
+interface Palette {
+  /** master canvas */
+  cream: string;
+  /** cards, panels, and text sitting on ink fills */
+  white: string;
+  /** ink: text, blueprint lines, solid fills */
+  black: string;
+  /** structural hairlines */
+  gray: string;
+  dark: string;
+  muted: string;
+  done: string;
+  progress: string;
+  danger: string;
+}
+
+const PALETTES: Record<Theme, Palette> = {
+  day: {
+    cream: "#F5F5DC",
+    white: "#FFFFFF",
+    black: "#000000",
+    gray: "#E5E5D8",
+    dark: "#333333",
+    muted: "#777777",
+    done: "#10B981",
+    progress: "#EAB308",
+    danger: "#EF4444",
+  },
+  night: {
+    cream: "#0F0F0F",
+    white: "#161616",
+    black: "#F5F5DC",
+    gray: "#333333",
+    dark: "#777777",
+    muted: "#8A8A80",
+    done: "#10B981",
+    progress: "#EAB308",
+    danger: "#EF4444",
+  },
+};
+
+const PaletteContext = React.createContext<Palette>(PALETTES.day);
+const usePalette = (): Palette => React.useContext(PaletteContext);
 
 const RADIUS = 8;
 
-const STATUS_COLOR: Record<TaskStatus, string> = {
+const statusColor = (C: Palette): Record<TaskStatus, string> => ({
   todo: C.muted,
   in_progress: C.progress,
   done: C.done,
-};
+});
 
 /* ------------------------------ Translations ----------------------------- */
 
